@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="D1-B">
+  <title>D1-B — Unités 3 &amp; 4</title>
+  <!-- Icône horloge — thème vert forêt + ambre -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='38' fill='%230d2318'/%3E%3Ccircle cx='90' cy='58' r='42' fill='none' stroke='%234ade80' stroke-width='3'/%3E%3Cline x1='90' y1='20' x2='90' y2='28' stroke='%234ade80' stroke-width='2.5'/%3E%3Cline x1='90' y1='88' x2='90' y2='96' stroke='%234ade80' stroke-width='2.5'/%3E%3Cline x1='50' y1='58' x2='58' y2='58' stroke='%234ade80' stroke-width='2.5'/%3E%3Cline x1='122' y1='58' x2='130' y2='58' stroke='%234ade80' stroke-width='2.5'/%3E%3Cline x1='90' y1='58' x2='72' y2='40' stroke='%234ade80' stroke-width='3.5' stroke-linecap='round'/%3E%3Cline x1='90' y1='58' x2='90' y2='26' stroke='%234ade80' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='90' cy='58' r='4' fill='%234ade80'/%3E%3Ctext x='90' y='132' font-size='34' font-weight='900' text-anchor='middle' font-family='sans-serif' fill='%23fde68a'%3ED1-B%3C/text%3E%3Ctext x='90' y='160' font-size='15' text-anchor='middle' font-family='sans-serif' fill='rgba(255,255,255,0.5)'%3ETemps%3C/text%3E%3C/svg%3E">
+
+  <style>
+    :root {
+      --bg:       #0d2318;
+      --surface:  #122e1e;
+      --card:     #183a26;
+      --accent1:  #4ade80;
+      --accent2:  #fde68a;
+      --correct:  #22c55e;
+      --wrong:    #f87171;
+      --text:     #f0fdf4;
+      --muted:    #6ee7b7;
+      --border:   #1f5236;
+      --radius:   14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    body { display: flex; flex-direction: column; min-height: 100dvh; }
+
+    /* ── COVER ───────────────────────────────────────────────── */
+    .cover {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 32px 28px 48px;
+      text-align: center; z-index: 200; overflow-y: auto;
+    }
+    .cover.hidden { display: none; }
+
+    .cover-badge {
+      width: 110px; height: 110px; border-radius: 26px;
+      background: var(--card); border: 2px solid var(--border);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; margin-bottom: 6px; gap: 2px;
+    }
+    .cover-badge-code { font-size: 32px; font-weight: 900; color: var(--accent2); line-height: 1; }
+    .cover-badge-sub  { font-size: 10px; color: var(--muted); font-weight: 600; }
+    .cover-byline { font-size: 11px; color: var(--muted); font-style: italic; margin-bottom: 18px; letter-spacing: 0.3px; }
+
+    .cover-title  { font-size: 26px; font-weight: 900; color: var(--text); margin-bottom: 5px; }
+    .cover-dossier {
+      font-size: 12px; color: var(--accent1); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px;
+    }
+
+    .cover-topics {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 18px;
+      width: 100%; max-width: 360px; margin-bottom: 24px; text-align: left;
+    }
+    .cover-topics-title {
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--muted); margin-bottom: 10px;
+    }
+    .cover-topic-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 5px 0; border-bottom: 1px solid var(--border);
+      font-size: 12.5px; line-height: 1.45;
+    }
+    .cover-topic-item:last-child { border-bottom: none; }
+    .cover-topic-unit {
+      background: var(--card); color: var(--accent2);
+      font-size: 9px; font-weight: 800; padding: 2px 6px;
+      border-radius: 10px; white-space: nowrap; margin-top: 2px; flex-shrink: 0;
+    }
+    .cover-topic-text { color: var(--text); }
+    .cover-topic-text em { color: var(--muted); font-style: normal; font-size: 11.5px; }
+
+    .cover-stats { display: flex; gap: 12px; margin-bottom: 28px; }
+    .cover-stat {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 16px; text-align: center;
+    }
+    .cover-stat-num { font-size: 22px; font-weight: 900; color: var(--accent1); }
+    .cover-stat-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+    .btn-commencer {
+      width: 100%; max-width: 360px;
+      background: linear-gradient(135deg, var(--accent1), #16a34a);
+      color: #052e16; border: none; padding: 18px; border-radius: var(--radius);
+      font-size: 18px; font-weight: 800; cursor: pointer;
+    }
+    .btn-commencer:active { opacity: 0.85; }
+
+    /* ── HEADER ──────────────────────────────────────────────── */
+    .header {
+      background: var(--surface); padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .header-left { display: flex; flex-direction: column; gap: 2px; }
+    .header-title { font-size: 17px; font-weight: 800; color: var(--accent2); }
+    .header-sub   { font-size: 11px; color: var(--muted); }
+    .btn-restart {
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--accent1); padding: 8px 14px; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .btn-restart:active { opacity: 0.75; }
+    .header-btns { display: flex; gap: 8px; }
+    .btn-cover {
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--muted); padding: 8px 12px; border-radius: 8px;
+      font-size: 13px; cursor: pointer;
+    }
+    .btn-cover:active { opacity: 0.75; }
+
+    /* ── TABS ────────────────────────────────────────────────── */
+    .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .tab-btn {
+      flex: 1; padding: 11px 8px; background: none; border: none;
+      border-bottom: 3px solid transparent; color: var(--muted);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .tab-btn.active { color: var(--accent1); border-bottom-color: var(--accent1); }
+
+    .tab-pane { display: none; flex: 1; overflow-y: auto; flex-direction: column; }
+    .tab-pane.active { display: flex; }
+
+    /* ── QUIZ ────────────────────────────────────────────────── */
+    .quiz-wrap { padding: 16px; display: flex; flex-direction: column; flex: 1; }
+
+    .progress-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .progress-track { background: var(--card); border-radius: 4px; height: 6px; overflow: hidden; margin-bottom: 18px; }
+    .progress-fill { background: linear-gradient(90deg, var(--accent1), var(--accent2)); height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+
+    .topic-tag {
+      display: inline-block; background: var(--card); border: 1px solid var(--border);
+      color: var(--accent2); font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      padding: 4px 10px; border-radius: 20px; margin-bottom: 12px;
+    }
+    .question-text { font-size: 20px; font-weight: 700; line-height: 1.4; margin-bottom: 7px; }
+    .question-tr   { font-size: 13px; color: var(--muted); font-style: italic; margin-bottom: 22px; }
+
+    .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .opt-btn {
+      background: var(--card); border: 2px solid var(--border);
+      color: var(--text); padding: 15px 18px; border-radius: var(--radius);
+      font-size: 17px; font-weight: 600; text-align: left; cursor: pointer;
+      transition: border-color 0.15s, background 0.15s; width: 100%;
+    }
+    .opt-btn:not(:disabled):active { transform: scale(0.98); }
+    .opt-btn:disabled { cursor: default; }
+    .opt-btn.correct { background: rgba(34,197,94,0.18); border-color: var(--correct); color: var(--correct); }
+    .opt-btn.wrong   { background: rgba(248,113,113,0.18); border-color: var(--wrong); color: var(--wrong); }
+    .opt-btn .key-hint {
+      display: inline-block; background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13); border-radius: 4px;
+      padding: 1px 6px; font-size: 11px; margin-right: 8px;
+      color: var(--muted); font-weight: 700;
+    }
+
+    .feedback { display: none; border-radius: var(--radius); padding: 13px 15px; margin-bottom: 14px; }
+    .feedback.correct { background: rgba(34,197,94,0.13); border: 1px solid var(--correct); }
+    .feedback.wrong   { background: rgba(248,113,113,0.13); border: 1px solid var(--wrong); }
+    .fb-head { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
+    .feedback.correct .fb-head { color: var(--correct); }
+    .feedback.wrong   .fb-head { color: var(--wrong); }
+    .fb-body { font-size: 13px; line-height: 1.65; color: var(--text); opacity: 0.88; white-space: pre-wrap; }
+
+    .btn-next {
+      display: none; width: 100%; background: var(--accent1); color: #052e16;
+      border: none; padding: 15px; border-radius: var(--radius);
+      font-size: 16px; font-weight: 700; cursor: pointer; margin-top: auto;
+    }
+    .btn-next:active { opacity: 0.85; }
+
+    /* ── SCORE ───────────────────────────────────────────────── */
+    .score-screen {
+      display: none; flex-direction: column; align-items: center;
+      justify-content: center; padding: 40px 24px; text-align: center; flex: 1;
+    }
+    .score-ring {
+      width: 148px; height: 148px; border-radius: 50%;
+      border: 5px solid var(--accent2); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; margin-bottom: 20px;
+    }
+    .score-num { font-size: 52px; font-weight: 900; color: var(--accent2); line-height: 1; }
+    .score-den { font-size: 15px; color: var(--muted); margin-top: 2px; }
+    .score-pct { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+    .score-msg { font-size: 15px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+    .score-actions { display: flex; gap: 12px; width: 100%; max-width: 320px; }
+    .btn-score-cover {
+      flex: 1; background: var(--card); border: 1px solid var(--border);
+      color: var(--muted); padding: 14px; border-radius: var(--radius);
+      font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    .btn-new-session {
+      flex: 2; background: var(--accent2); color: var(--bg); border: none;
+      padding: 14px; border-radius: var(--radius);
+      font-size: 15px; font-weight: 800; cursor: pointer;
+    }
+    .btn-new-session:active, .btn-score-cover:active { opacity: 0.85; }
+
+    /* ── GRAMMAR ─────────────────────────────────────────────── */
+    .grammar-wrap { padding: 16px 16px 40px; }
+    .g-section { margin-bottom: 28px; }
+    .g-title {
+      font-size: 17px; font-weight: 800; color: var(--accent2);
+      padding-bottom: 7px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
+    }
+    .g-subtitle { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 12px; }
+    .g-rule {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 12px 14px; margin-bottom: 9px;
+      font-size: 13px; line-height: 1.65;
+    }
+    .g-rule strong { color: var(--accent1); }
+    .g-rule em { color: var(--accent2); font-style: normal; font-weight: 600; }
+    .g-rule .ex { color: var(--muted); font-style: italic; font-size: 12px; display: block; margin-top: 4px; }
+    .g-alert {
+      background: rgba(253,230,138,0.10); border: 1px solid rgba(253,230,138,0.4);
+      border-radius: 10px; padding: 10px 13px; font-size: 13px;
+      margin-top: 8px; color: var(--text); line-height: 1.5;
+    }
+    .g-alert::before { content: "⚠️ "; }
+
+    table.conj { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 8px; }
+    table.conj th {
+      background: var(--surface); color: var(--accent1); padding: 7px 10px;
+      text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    table.conj td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    table.conj tr:last-child td { border-bottom: none; }
+    table.conj td:first-child { color: var(--muted); width: 28%; }
+    table.conj td.f { font-weight: 700; color: var(--accent2); width: 28%; }
+    table.conj td.e { color: var(--muted); font-style: italic; font-size: 12px; }
+    table.conj th:first-child { width: 28%; }
+    table.conj.wide td:first-child { width: 20%; }
+    table.conj.wide th:first-child { width: 20%; }
+    table.conj.wide td.f { width: 25%; }
+    table.conj.wide th { font-size: 10px; }
+
+    .kbd-hint {
+      display: inline-block; background: rgba(74,222,128,0.08);
+      border: 1px solid rgba(74,222,128,0.25); border-radius: 6px;
+      padding: 6px 12px; font-size: 11.5px; color: var(--muted);
+      margin-top: 12px; line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── COVER ───────────────────────────────────────────────────── -->
+<div id="cover" class="cover">
+
+  <div class="cover-badge">
+    <svg width="54" height="54" viewBox="0 0 54 54" style="margin-bottom:2px">
+      <circle cx="27" cy="27" r="24" fill="none" stroke="#4ade80" stroke-width="2"/>
+      <circle cx="27" cy="27" r="3" fill="#4ade80"/>
+      <line x1="27" y1="27" x2="16" y2="13" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="27" y1="27" x2="27" y2="8" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/>
+      <line x1="27" y1="5" x2="27" y2="10" stroke="#4ade80" stroke-width="2"/>
+    </svg>
+    <div class="cover-badge-code">D1-B</div>
+    <div class="cover-badge-sub">Dossier 1</div>
+  </div>
+  <div class="cover-byline">App de Paco Tovar</div>
+
+  <div class="cover-title">Unités 3 &amp; 4</div>
+  <div class="cover-dossier">Objectif Diplomatie · A1/A2</div>
+
+  <div class="cover-topics">
+    <div class="cover-topics-title">Grammaire couverte</div>
+
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U3</span>
+      <span class="cover-topic-text">
+        Indicateurs temporels<br>
+        <em>hier, demain, vers, de…à, dans…</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U3</span>
+      <span class="cover-topic-text">
+        Adjectifs possessifs<br>
+        <em>mon/ma/mes · ton/ta/tes · son/sa/ses…</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U3</span>
+      <span class="cover-topic-text">
+        Formes d'interrogation · quel/quelle<br>
+        <em>Intonation · est-ce que · inversion</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U3</span>
+      <span class="cover-topic-text">
+        Verbes pronominaux &amp; en -er<br>
+        <em>se lever · se promener · préférer</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U4</span>
+      <span class="cover-topic-text">
+        Pouvoir · Devoir · Vouloir<br>
+        <em>Verbes opérateurs au présent</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U4</span>
+      <span class="cover-topic-text">
+        L'impératif<br>
+        <em>tu · nous · vous · formes irrégulières</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U4</span>
+      <span class="cover-topic-text">
+        Pronoms COD · COI · Passé composé<br>
+        <em>le/la/les · lui/leur · avoir vs être</em>
+      </span>
+    </div>
+  </div>
+
+  <div class="cover-stats">
+    <div class="cover-stat">
+      <div class="cover-stat-num">80</div>
+      <div class="cover-stat-lbl">questions</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-num">10</div>
+      <div class="cover-stat-lbl">par session</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-num">∞</div>
+      <div class="cover-stat-lbl">aléatoires</div>
+    </div>
+  </div>
+
+  <button class="btn-commencer" onclick="commencer()">Commencer →</button>
+</div>
+
+<!-- ── HEADER ─────────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-left">
+    <div class="header-title">D1-B · Unités 3 &amp; 4</div>
+    <div class="header-sub">Objectif Diplomatie — Dossier 1</div>
+  </div>
+  <div class="header-btns">
+    <button class="btn-cover" onclick="goToCover()" title="Retour à la portada">⌂</button>
+    <button class="btn-restart" onclick="restart()">↺ Recommencer</button>
+  </div>
+</header>
+
+<!-- ── TABS ───────────────────────────────────────────────────── -->
+<nav class="tabs">
+  <button class="tab-btn active" id="tab-btn-quiz"    onclick="switchTab('quiz')">📝 Exercices</button>
+  <button class="tab-btn"        id="tab-btn-grammar" onclick="switchTab('grammar')">📖 Grammaire</button>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════
+     QUIZ TAB
+════════════════════════════════════════════════════════════ -->
+<div id="pane-quiz" class="tab-pane active">
+  <div id="score-screen" class="score-screen">
+    <div class="score-ring">
+      <div class="score-num" id="sc-num">0</div>
+      <div class="score-den">/ 10</div>
+    </div>
+    <div class="score-pct" id="sc-pct"></div>
+    <div class="score-msg" id="sc-msg"></div>
+    <div class="score-actions">
+      <button class="btn-score-cover" onclick="goToCover()">⌂ Portada</button>
+      <button class="btn-new-session" onclick="restart()">↺ Nouvelle session</button>
+    </div>
+  </div>
+
+  <div id="quiz-screen" class="quiz-wrap">
+    <div>
+      <div class="progress-row">
+        <span id="prog-text">Question 1 / 10</span>
+        <span id="score-live">Score : 0</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="topic-tag" id="topic-tag">—</div>
+    <div class="question-text" id="q-text"></div>
+    <div class="question-tr"   id="q-tr"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback">
+      <div class="fb-head" id="fb-head"></div>
+      <div class="fb-body" id="fb-body"></div>
+    </div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()"></button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     GRAMMAR TAB
+════════════════════════════════════════════════════════════ -->
+<div id="pane-grammar" class="tab-pane">
+  <div class="grammar-wrap">
+
+    <!-- 1. INDICATEURS TEMPORELS -->
+    <div class="g-section">
+      <div class="g-title">1. Indicateurs temporels &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(indicadores de tiempo)</span></div>
+      <div class="g-subtitle">Situer un événement dans le temps</div>
+      <div class="g-rule">
+        <strong>Heure précise</strong> → <em>à</em> ; heure approximative → <em>vers</em><br>
+        <span class="ex">La réunion commence à 9h. / Il arrive vers 10h.</span>
+      </div>
+      <div class="g-rule">
+        <strong>Durée</strong> → <em>de … à</em> &nbsp;·&nbsp; <strong>Délai futur</strong> → <em>dans</em><br>
+        <span class="ex">De 9h à 11h. / La réunion est dans 20 minutes.</span>
+      </div>
+      <div class="g-rule">
+        <strong>Passé ↔ Présent ↔ Futur</strong><br>
+        avant-hier · <em>hier</em> · <em>aujourd'hui</em> · <em>demain</em> · après-demain<br>
+        la semaine dernière · cette semaine · la semaine prochaine
+        <span class="ex">Il est arrivé hier. / La conférence est demain. / On se voit la semaine prochaine.</span>
+      </div>
+      <div class="g-rule">
+        <strong>Moments de la journée</strong><br>
+        <em>le matin</em> (habitude) vs <em>ce matin</em> (aujourd'hui) · <em>à midi</em> · <em>le soir</em> · <em>la nuit</em>
+      </div>
+    </div>
+
+    <!-- 2. ADJECTIFS POSSESSIFS -->
+    <div class="g-section">
+      <div class="g-title">2. Adjectifs possessifs &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(adjetivos posesivos)</span></div>
+      <div class="g-subtitle">S'accordent avec le nom qu'ils accompagnent (pas avec le possesseur)</div>
+      <table class="conj wide">
+        <tr><th>Possesseur</th><th>Masc. sing.</th><th>Fém. sing.</th><th>Pluriel</th></tr>
+        <tr><td>Je</td><td class="f">mon</td><td class="f">ma</td><td class="f">mes</td></tr>
+        <tr><td>Tu</td><td class="f">ton</td><td class="f">ta</td><td class="f">tes</td></tr>
+        <tr><td>Il / Elle</td><td class="f">son</td><td class="f">sa</td><td class="f">ses</td></tr>
+        <tr><td>Nous</td><td class="f">notre</td><td class="f">notre</td><td class="f">nos</td></tr>
+        <tr><td>Vous</td><td class="f">votre</td><td class="f">votre</td><td class="f">vos</td></tr>
+        <tr><td>Ils / Elles</td><td class="f">leur</td><td class="f">leur</td><td class="f">leurs</td></tr>
+      </table>
+      <div class="g-alert">Devant féminin commençant par voyelle/H muet → forme masculine : <em>mon amie</em> (pas ~~ma amie~~), <em>ton attachée</em>.</div>
+    </div>
+
+    <!-- 3. INTERROGATION -->
+    <div class="g-section">
+      <div class="g-title">3. Les formes d'interrogation</div>
+      <div class="g-subtitle">Trois façons de poser une question en français</div>
+      <div class="g-rule">
+        <strong>1. Intonation montante</strong> — registre familier<br>
+        <span class="ex">Tu travailles ici ? / Vous partez demain ?</span>
+      </div>
+      <div class="g-rule">
+        <strong>2. Est-ce que</strong> — registre courant<br>
+        <span class="ex">Est-ce que tu travailles ici ? / Est-ce que vous partez demain ?</span>
+      </div>
+      <div class="g-rule">
+        <strong>3. Inversion</strong> — registre soutenu / écrit<br>
+        verbe + trait d'union + sujet<br>
+        <span class="ex">Travaillez-vous ici ? / Partez-vous demain ?</span>
+        <span class="ex">⚠️ 3e pers. + voyelle → -t- : Travaille-<strong>t</strong>-elle ici ?</span>
+      </div>
+      <div class="g-rule">
+        <strong>Adjectif interrogatif : quel</strong> — s'accorde en genre et en nombre<br>
+        <em>quel</em> (masc. sing.) · <em>quelle</em> (fém. sing.) · <em>quels</em> (masc. pl.) · <em>quelles</em> (fém. pl.)
+        <span class="ex">Quel jour ? / Quelle heure ? / Quels documents ? / Quelles langues ?</span>
+      </div>
+    </div>
+
+    <!-- 4. VERBES PRONOMINAUX & EN -ER -->
+    <div class="g-section">
+      <div class="g-title">4. Verbes pronominaux &amp; changements de radical</div>
+      <div class="g-subtitle">Verbes en -er avec modifications orthographiques</div>
+      <div class="g-rule">
+        <strong>e muet → è</strong> (se lever, se promener) — aux formes je/tu/il/ils<br>
+        <span class="ex">je me <em>lève</em>, tu te <em>lèves</em>, il se <em>lève</em> · nous nous <em>levons</em>, vous vous <em>levez</em></span>
+      </div>
+      <div class="g-rule">
+        <strong>é → è</strong> (préférer) — aux formes je/tu/il/ils<br>
+        <span class="ex">je <em>préfère</em>, tu <em>préfères</em>, il <em>préfère</em> · nous <em>préférons</em>, vous <em>préférez</em></span>
+      </div>
+      <div class="g-rule">
+        <strong>Verbes pronominaux</strong> — le pronom réfléchi change avec le sujet<br>
+        <em>me · te · se · nous · vous · se</em>
+        <span class="ex">Je <em>me</em> lève. / Tu <em>te</em> lèves. / Il <em>se</em> lève. / Nous <em>nous</em> levons.</span>
+      </div>
+      <div class="g-alert">Devant voyelle/H muet : <em>me → m'</em>, <em>te → t'</em>, <em>se → s'</em> : <em>Il s'intéresse à la politique.</em></div>
+    </div>
+
+    <!-- 5. POUVOIR / DEVOIR / VOULOIR -->
+    <div class="g-section">
+      <div class="g-title">5. Pouvoir · Devoir · Vouloir &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(poder · deber · querer)</span></div>
+      <div class="g-subtitle">Verbes modaux (opérateurs) + infinitif</div>
+      <table class="conj wide">
+        <tr><th>Sujet</th><th>Pouvoir</th><th>Devoir</th><th>Vouloir</th></tr>
+        <tr><td>Je / J'</td><td class="f">peux</td><td class="f">dois</td><td class="f">veux</td></tr>
+        <tr><td>Tu</td><td class="f">peux</td><td class="f">dois</td><td class="f">veux</td></tr>
+        <tr><td>Il / Elle</td><td class="f">peut</td><td class="f">doit</td><td class="f">veut</td></tr>
+        <tr><td>Nous</td><td class="f">pouvons</td><td class="f">devons</td><td class="f">voulons</td></tr>
+        <tr><td>Vous</td><td class="f">pouvez</td><td class="f">devez</td><td class="f">voulez</td></tr>
+        <tr><td>Ils / Elles</td><td class="f">peuvent</td><td class="f">doivent</td><td class="f">veulent</td></tr>
+      </table>
+      <div class="g-alert">Au téléphone, la forme la plus polie est le <strong>conditionnel</strong> : «<em>Je voudrais / Pourriez-vous…</em>» plutôt que «je veux / pouvez-vous».</div>
+    </div>
+
+    <!-- 6. IMPÉRATIF -->
+    <div class="g-section">
+      <div class="g-title">6. L'impératif &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(el imperativo)</span></div>
+      <div class="g-subtitle">Donner un ordre, une instruction, un conseil</div>
+      <div class="g-rule">
+        <strong>Verbes en -er</strong> — supprimer le -s à la forme «tu»<br>
+        <span class="ex">Parle ! (tu) · Parlons ! (nous) · Parlez ! (vous)</span>
+      </div>
+      <div class="g-rule">
+        <strong>Verbes en -ir / autres</strong> — mêmes formes que le présent<br>
+        <span class="ex">Finis ! (tu) · Finissons ! (nous) · Finissez ! (vous)</span>
+      </div>
+      <div class="g-rule">
+        <strong>Irréguliers à mémoriser</strong><br>
+        <em>être</em> → sois / soyons / soyez<br>
+        <em>avoir</em> → aie / ayons / ayez<br>
+        <em>aller</em> → va / allons / allez &nbsp;(mais : <em>vas-y !</em>)
+      </div>
+      <div class="g-rule">
+        <strong>Impératif négatif</strong> — ne + verbe + pas<br>
+        <span class="ex">Ne partez pas sans moi ! / Ne parle pas pendant la réunion !</span>
+      </div>
+    </div>
+
+    <!-- 7. PRONOMS COD -->
+    <div class="g-section">
+      <div class="g-title">7. Pronoms COD &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(pronombres objeto directo)</span></div>
+      <div class="g-subtitle">Remplacent un nom sans préposition · se placent AVANT le verbe</div>
+      <table class="conj">
+        <tr><th>COD</th><th>Pronom</th><th>Exemple</th></tr>
+        <tr><td>Masc. sing.</td><td class="f">le / l'</td><td class="e">Je connais le directeur → Je <em>le</em> connais.</td></tr>
+        <tr><td>Fém. sing.</td><td class="f">la / l'</td><td class="e">Il appelle sa collègue → Il <em>la</em> appelle.</td></tr>
+        <tr><td>Pluriel</td><td class="f">les</td><td class="e">Nous attendons les délégués → Nous <em>les</em> attendons.</td></tr>
+      </table>
+      <div class="g-alert">Forme négative : ne + <strong>pronom</strong> + verbe + pas : «Je <em>ne le</em> connais <em>pas</em>.»</div>
+    </div>
+
+    <!-- 8. PRONOMS COI -->
+    <div class="g-section">
+      <div class="g-title">8. Pronoms COI &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(pronombres objeto indirecto)</span></div>
+      <div class="g-subtitle">Remplacent «à + personne» · se placent AVANT le verbe</div>
+      <table class="conj">
+        <tr><th>COI</th><th>Pronom</th><th>Exemple</th></tr>
+        <tr><td>à moi</td><td class="f">me / m'</td><td class="e">Il me parle. / Il m'écrit.</td></tr>
+        <tr><td>à toi</td><td class="f">te / t'</td><td class="e">Je te téléphone. / Je t'envoie.</td></tr>
+        <tr><td>à lui/elle</td><td class="f">lui</td><td class="e">Elle lui répond. (masc. ET fém.)</td></tr>
+        <tr><td>à nous</td><td class="f">nous</td><td class="e">Ils nous donnent les infos.</td></tr>
+        <tr><td>à vous</td><td class="f">vous</td><td class="e">Je vous envoie le dossier.</td></tr>
+        <tr><td>à eux/elles</td><td class="f">leur</td><td class="e">Je leur téléphone demain.</td></tr>
+      </table>
+      <div class="g-alert"><strong>lui</strong> = à lui OU à elle (singulier). <strong>leur</strong> = à eux / à elles (pluriel). «Lui» ne remplace jamais des choses.</div>
+    </div>
+
+    <!-- 9. PASSÉ COMPOSÉ -->
+    <div class="g-section">
+      <div class="g-title">9. Le passé composé &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(el pretérito perfecto)</span></div>
+      <div class="g-subtitle">Auxiliaire (avoir ou être) + participe passé</div>
+      <div class="g-rule">
+        <strong>Avec «avoir»</strong> — la majorité des verbes<br>
+        <span class="ex">parler → j'<em>ai parlé</em> · finir → j'<em>ai fini</em> · faire → j'<em>ai fait</em></span>
+      </div>
+      <div class="g-rule">
+        <strong>Avec «être»</strong> — verbes de mouvement + pronominaux<br>
+        aller, venir, partir, arriver, entrer, sortir, monter, descendre, naître, mourir…<br>
+        <span class="ex">Elle <em>est partie</em>. / Nous <em>sommes allés</em>. / Ils <em>se sont levés</em>.</span>
+      </div>
+      <div class="g-rule">
+        <strong>Accord avec être</strong> — le PP s'accorde avec le sujet<br>
+        <span class="ex">Il est arrivé. / Elle est arrivée. / Ils sont arrivés. / Elles sont arrivées.</span>
+      </div>
+      <div class="g-rule">
+        <strong>Participes passés irréguliers à retenir</strong><br>
+        <em>faire → fait · être → été · avoir → eu · prendre → pris · venir → venu</em>
+      </div>
+    </div>
+
+    <!-- 10. NÉGATION + ARTICLES -->
+    <div class="g-section">
+      <div class="g-title">10. Négation + articles indéfinis/partitifs</div>
+      <div class="g-subtitle">Les articles changent après la négation</div>
+      <div class="g-rule">
+        <strong>Un / une / des → de (d')</strong> après une négation<br>
+        <span class="ex">J'ai <em>un</em> rendez-vous. → Je n'ai pas <em>de</em> rendez-vous.</span>
+        <span class="ex">Il y a <em>des</em> délégués. → Il n'y a pas <em>de</em> délégués.</span>
+        <span class="ex">Je bois <em>du</em> café. → Je ne bois pas <em>de</em> café.</span>
+      </div>
+      <div class="g-rule">
+        <strong>Élision</strong> : «de» + voyelle → «d'»<br>
+        <span class="ex">Il n'y a pas <em>d'</em>appels. / Je n'ai pas <em>d'</em>agenda libre.</span>
+      </div>
+      <div class="g-alert">Exception : les articles définis (le/la/les) ne changent PAS : «Je n'aime pas <em>le</em> café» (je n'aime pas le café en général).</div>
+    </div>
+
+    <div class="kbd-hint">
+      ⌨️ <strong>Raccourcis clavier :</strong> Appuyez sur <strong>1 · 2 · 3 · 4</strong> pour sélectionner une réponse, et sur <strong>Entrée</strong> ou <strong>Espace</strong> pour passer à la question suivante.
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+/* ================================================================
+   BANQUE DE QUESTIONS — D1-B  (80 questions)
+   U3 : Temps & Agenda · Adjectifs possessifs · Interrogation · Pronominaux
+   U4 : Pouvoir/Devoir/Vouloir · Impératif · COD · COI · Passé composé · Négation
+================================================================ */
+const BANK = [
+
+  // ── ADJECTIFS POSSESSIFS (12) ──────────────────────────────────
+  { topic:"Poss.", q:"Complétez : « ___ bureau est grand. » (à moi, masc.)", tr:"Completa: «___ oficina es grande.» (mío, masc.)",
+    opts:["Mon","Ma","Mes","Son"], ans:0,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nJe :      MON    MA     MES\nTu :      TON    TA     TES\nIl/Elle : SON    SA     SES\nNous :    NOTRE  NOTRE  NOS\nVous :    VOTRE  VOTRE  VOS\nIls :     LEUR   LEUR   LEURS\n→ «bureau» masc. sing., possesseur = je → MON bureau\nNote : MON/TON/SON devant fém. commençant par voyelle !\n/ Adjetivos posesivos:\nbur. masc. sing., poseedor=yo → MON bureau\nMON/TON/SON ante fem. que empieza por vocal: mon amie" },
+
+  { topic:"Poss.", q:"Complétez : « ___ réunion est à 10h. » (à moi, fém.)", tr:"Completa: «___ reunión es a las 10h.» (mía, fem.)",
+    opts:["Mon","Ma","Mes","Son"], ans:1,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nJe :      MON    MA     MES\n→ «réunion» fém. sing., possesseur = je → MA réunion\nAttention : devant voyelle, MA → MON :\n• mon amie (fém. mais commence par voyelle !)\n• mon ambassade → MON ambassade (pas MA)\n/ Adjetivos posesivos:\n«réunion» fem. sing., poseedor=yo → MA réunion\nCuidado: ante vocal, MA → MON : mon amie, mon ambassade" },
+
+  { topic:"Poss.", q:"Complétez : « ___ collègues sont sympas. » (à moi, plur.)", tr:"Completa: «___ colegas son simpáticos.» (míos, plur.)",
+    opts:["Mon","Ma","Mes","Nos"], ans:2,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nJe :      MON    MA     MES\n→ «collègues» pluriel, possesseur = je → MES collègues\nRègle : MES s'utilise pour TOUS les pluriels (masc. et fém.)\n• mes collègues (masc.)\n• mes réunions (fém.)\n/ Adjetivos posesivos:\n«collègues» plural, poseedor=yo → MES collègues\nMES = todos los plurales (masc. y fem.)" },
+
+  { topic:"Poss.", q:"Complétez : « ___ passeport est valide. » (à toi, masc.)", tr:"Completa: «___ pasaporte es válido.» (tuyo, masc.)",
+    opts:["Mon","Ton","Son","Votre"], ans:1,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nTu :      TON    TA     TES\n→ «passeport» masc. sing., possesseur = tu → TON passeport\nComparer :\n• MON (je) · TON (tu) · SON (il/elle)\n• Ton bureau · ta réunion · tes collègues\n/ Adjetivos posesivos:\n«passeport» masc. sing., poseedor=tú → TON passeport\nTON/TA/TES = posesivos de «tu» (tú)" },
+
+  { topic:"Poss.", q:"Complétez : « ___ adresse est correcte ? » (à toi, fém.)", tr:"Completa: «¿___ dirección es correcta?» (tuya, fem.)",
+    opts:["Mon","Ta","Ton","Tes"], ans:2,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nTu :      TON    TA     TES\n→ «adresse» fém. sing., possesseur = tu → TA adresse\nMais attention ! «adresse» commence par une voyelle → TON adresse ?\nNon ! «adresse» commence par «a» → TON adresse (élision : TA → TON devant voyelle)\n→ TON adresse (pas TA adresse)\n/ Adjetivos posesivos:\n«adresse» empieza por vocal → TON adresse (no TA)\nRegla: TA → TON ante vocal: ton amie, ton adresse" },
+
+  { topic:"Poss.", q:"Complétez : « ___ bureau est au 3e étage. » (à lui/elle, masc.)", tr:"Completa: «___ oficina está en el 3er piso.» (suyo/suya, masc.)",
+    opts:["Mon","Ton","Son","Leur"], ans:2,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nIl/Elle : SON    SA     SES\n→ «bureau» masc. sing., possesseur = il ou elle → SON bureau\nNote importante : SON peut être masculin OU féminin du possesseur !\n• SON bureau = son bureau à lui OU à elle\n• SA voiture = sa voiture à lui OU à elle\n/ Adjetivos posesivos:\nSON/SA/SES = posesivos de il/elle (él/ella)\nSON bureau puede ser de él O de ella (ambiguo)" },
+
+  { topic:"Poss.", q:"Complétez : « ___ valise est à la consigne. » (à lui, fém.)", tr:"Completa: «___ maleta está en consigna.» (de él, fem.)",
+    opts:["Mon","Ton","Sa","Ses"], ans:2,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nIl/Elle : SON    SA     SES\n→ «valise» fém. sing., possesseur = il → SA valise\nNote : SON/SA/SES s'accordent avec LE NOM POSSÉDÉ, pas avec le possesseur :\n• son bureau (bureau = masc.)\n• sa valise (valise = fém.)\n• ses bagages (bagages = plur.)\n/ Adjetivos posesivos:\nSON/SA/SES concuerdan con el OBJETO POSEÍDO, no con el poseedor:\nson bureau (masc.) · sa valise (fem.) · ses bagages (plur.)" },
+
+  { topic:"Poss.", q:"Complétez : « ___ ambassade reçoit des invités. » (à nous)", tr:"Completa: «___ embajada recibe invitados.» (nuestra)",
+    opts:["Nos","Notre","Mon","Votre"], ans:1,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nNous :    NOTRE  NOTRE  NOS\n→ «ambassade» sing. (masc. OU fém.), possesseur = nous → NOTRE ambassade\nNote : NOTRE est INVARIABLE en genre (masc. = fém. = NOTRE)\n• notre bureau (masc.) · notre ambassade (fém.) · nos collègues (plur.)\n/ Adjetivos posesivos:\nNOTRE es invariable en género: notre bureau = notre ambassade\nNOS solo para plural: nos collègues" },
+
+  { topic:"Poss.", q:"Complétez : « ___ collègues arrivent demain. » (à nous)", tr:"Completa: «___ colegas llegan mañana.» (nuestros)",
+    opts:["Notre","Nos","Leurs","Votre"], ans:1,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nNous :    NOTRE  NOTRE  NOS\n→ «collègues» pluriel, possesseur = nous → NOS collègues\nRègle : NOS pour TOUS les pluriels :\n• nos collègues (masc.)\n• nos réunions (fém.)\n/ Adjetivos posesivos:\n«collègues» plural, poseedor=nosotros → NOS collègues\nNOS = todos los plurales (masc. y fem.)" },
+
+  { topic:"Poss.", q:"Complétez : « C'est ___ dossier. » (à vous)", tr:"Completa: «Es ___ expediente.» (de ustedes)",
+    opts:["Votre","Vos","Notre","Nos"], ans:0,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nVous :    VOTRE  VOTRE  VOS\n→ «dossier» sing., possesseur = vous → VOTRE dossier\nRègle : VOTRE est invariable en genre (comme NOTRE)\n• votre bureau (masc.) · votre réunion (fém.) · vos collègues (plur.)\n/ Adjetivos posesivos:\nVOTRE es invariable en género:\nvotre bureau = votre réunion\nVOS solo para plural: vos collègues" },
+
+  { topic:"Poss.", q:"Complétez : « ___ documents sont prêts. » (à eux)", tr:"Completa: «___ documentos están listos.» (de ellos)",
+    opts:["Leur","Leurs","Son","Ses"], ans:1,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nIls/Elles : LEUR   LEUR   LEURS\n→ «documents» pluriel, possesseur = ils → LEURS documents\nNote : LEUR (sing.) vs LEURS (plur.) selon le nombre du NOM :\n• leur collègue (sing.) · leurs collègues (plur.)\n• leur bureau (sing.) · leurs bureaux (plur.)\n/ Adjetivos posesivos:\nLEUR (sing.) vs LEURS (plur.) según el número del OBJETO:\nleur bureau (sing.) · leurs bureaux (plur.)" },
+
+  { topic:"Poss.", q:"Complétez : « ___ ambassadrice est très compétente. » (à eux)", tr:"Completa: «___ embajadora es muy competente.» (de ellos)",
+    opts:["Leur","Leurs","Son","Sa"], ans:0,
+    xp:"Adjectifs possessifs – tableau complet :\n          masc.  fém.   pluriel\nIls/Elles : LEUR   LEUR   LEURS\n→ «ambassadrice» singulier, possesseur = ils → LEUR ambassadrice\nNote : LEUR est invariable en genre (masc. = fém. = LEUR) !\n• leur directeur (masc. sing.) · leur directrice (fém. sing.)\n• leurs directeurs / leurs directrices (pluriel = LEURS)\n/ Adjetivos posesivos:\nLEUR es invariable en género: leur directeur = leur directrice\nLEURS solo para plural: leurs collègues" },
+
+  // ── INDICATEURS TEMPORELS (8) ─────────────────────────────────
+  { topic:"Temporel", q:"« ___ je vais au bureau. » (= ce jour-ci)", tr:"«___ voy a la oficina.» (= este día)",
+    opts:["Hier","Demain","Aujourd'hui","La semaine prochaine"], ans:2,
+    xp:"Indicateurs temporels – liste complète :\n• HIER = ayer (passé)\n• AVANT-HIER = anteayer\n• AUJOURD'HUI = hoy (présent)\n• DEMAIN = mañana (futur proche)\n• APRÈS-DEMAIN = pasado mañana\n• LA SEMAINE DERNIÈRE = la semana pasada\n• LA SEMAINE PROCHAINE = la semana próxima\n• MAINTENANT = ahora · TOUJOURS = siempre\n→ «ce jour-ci» = AUJOURD'HUI\n/ Indicadores temporales:\nhier=ayer · aujourd'hui=hoy · demain=mañana" },
+
+  { topic:"Temporel", q:"« Il est parti ___ matin. » (= le matin du jour précédent)", tr:"«Él partió ___ por la mañana.» (= mañana del día anterior)",
+    opts:["hier","demain","aujourd'hui","avant-hier"], ans:0,
+    xp:"Indicateurs temporels de passé :\n• HIER = ayer\n• AVANT-HIER = anteayer (deux jours avant)\n• LA SEMAINE DERNIÈRE = la semana pasada\n• LE MOIS DERNIER = el mes pasado\n• L'AN DERNIER / L'ANNÉE DERNIÈRE = el año pasado\n→ «le matin du jour précédent» = HIER matin\n/ Indicadores temporales de pasado:\nhier = ayer · avant-hier = anteayer\nla semaine dernière = la semana pasada" },
+
+  { topic:"Temporel", q:"« La conférence est ___ à 14h. » (= dans le futur proche)", tr:"«La conferencia es ___ a las 14h.» (= en el futuro próximo)",
+    opts:["hier","demain","aujourd'hui","maintenant"], ans:1,
+    xp:"Indicateurs temporels de futur :\n• DEMAIN = mañana\n• APRÈS-DEMAIN = pasado mañana\n• LA SEMAINE PROCHAINE = la semana próxima\n• LE MOIS PROCHAIN = el mes próximo\n• L'AN PROCHAIN / L'ANNÉE PROCHAINE = el año próximo\n→ «dans le futur proche» = DEMAIN\n/ Indicadores temporales de futuro:\ndemain = mañana · après-demain = pasado mañana\nla semaine prochaine = la semana próxima" },
+
+  { topic:"Temporel", q:"Complétez : « Il travaille ___ de 9h à 18h. » (= tous les jours)", tr:"Completa: «Él trabaja ___ de 9h a 18h.» (= todos los días)",
+    opts:["souvent","toujours","parfois","jamais"], ans:1,
+    xp:"Adverbes de fréquence – du plus au moins fréquent :\n• TOUJOURS = siempre (100%)\n• SOUVENT = a menudo / frecuentemente (75%)\n• PARFOIS = a veces (50%)\n• RAREMENT = raramente (25%)\n• JAMAIS = nunca (0%) → ne … jamais\n→ «tous les jours» = TOUJOURS\nPosition : généralement après le verbe conjugué\n/ Adverbios de frecuencia:\ntoujours=siempre · souvent=a menudo · parfois=a veces\nrarement=raramente · jamais=nunca" },
+
+  { topic:"Temporel", q:"Complétez : « Nous nous réunissons ___ le lundi. » (= chaque semaine)", tr:"Completa: «Nos reunimos ___ los lunes.» (= cada semana)",
+    opts:["parfois","toujours","rarement","jamais"], ans:1,
+    xp:"Adverbes de fréquence :\n• TOUJOURS = siempre (action qui se répète régulièrement)\n• «tous les lundis» / «chaque lundi» → TOUJOURS\nPosition : toujours après le verbe :\n• Nous nous réunissons TOUJOURS le lundi.\n• Elle travaille SOUVENT le week-end.\n/ Adverbios de frecuencia:\nTOUJOURS = siempre (acción que se repite regularmente)\nPositión: después del verbo conjugado" },
+
+  { topic:"Temporel", q:"Quelle phrase est au passé ?", tr:"¿Qué oración está en el pasado?",
+    opts:["Il part demain.","Il part la semaine prochaine.","Il est parti hier.","Il part maintenant."], ans:2,
+    xp:"Indicateurs temporels – marqueurs de temps :\nPassé : hier · avant-hier · la semaine dernière · le mois dernier · l'an dernier\nPrésent : aujourd'hui · maintenant · en ce moment\nFutur : demain · après-demain · la semaine prochaine · bientôt\n→ «hier» = ayer → passé ✓\n«est parti» = passé composé (confirmation)\n/ Indicadores temporales:\nhier · avant-hier → pasado\naujourd'hui · maintenant → presente\ndemain · la semaine prochaine → futuro" },
+
+  { topic:"Temporel", q:"Complétez : « La réunion est ___ à 10 minutes. » (= dans peu de temps)", tr:"Completa: «La reunión es ___ en 10 minutos.» (= en poco tiempo)",
+    opts:["hier","bientôt","la semaine dernière","avant-hier"], ans:1,
+    xp:"Indicateurs temporels de futur proche :\n• BIENTÔT = pronto / en breve\n• DANS + durée : dans 10 minutes · dans une heure · dans deux jours\n• DEMAIN = mañana\n• LA SEMAINE PROCHAINE = la semana próxima\n→ «dans peu de temps» = BIENTÔT\n/ Indicadores temporales de futuro próximo:\nbientôt = pronto · dans 10 minutes = en 10 minutos\ndemain = mañana" },
+
+  { topic:"Temporel", q:"Ordonnez du passé au futur : demain / hier / aujourd'hui", tr:"Ordena del pasado al futuro: demain / hier / aujourd'hui",
+    opts:["hier → aujourd'hui → demain","demain → hier → aujourd'hui","aujourd'hui → hier → demain","hier → demain → aujourd'hui"], ans:0,
+    xp:"Chronologie des indicateurs temporels :\n← PASSÉ ────────────────── FUTUR →\navant-hier · HIER · AUJOURD'HUI · DEMAIN · après-demain\nla semaine dernière → cette semaine → la semaine prochaine\nl'an dernier → cette année → l'an prochain\n→ ordre correct : hier → aujourd'hui → demain\n/ Cronología de los indicadores temporales:\n← PASADO ──────────────── FUTURO →\nhier · aujourd'hui · demain" },
+
+  // ── INTERROGATION (10) ────────────────────────────────────────
+  { topic:"Interrogation", q:"Quelle phrase est une question correcte ? (= Où habitez-vous ?)", tr:"¿Qué oración es una pregunta correcta? (= ¿Dónde viven?)",
+    opts:["Où vous habitez ?","Où habitez-vous ?","Vous habitez où ?","Toutes les réponses sont correctes."], ans:3,
+    xp:"Trois façons de poser une question en français :\n1. INTONATION (familier) : Vous habitez où ? (↗)\n2. EST-CE QUE (courant) : Où est-ce que vous habitez ?\n3. INVERSION (formel) : Où habitez-vous ?\n→ Toutes sont grammaticalement correctes !\nLe niveau de formalité diffère :\n• intonation = très familier\n• est-ce que = neutre/courant\n• inversion = formel/écrit\n/ Tres formas de preguntar:\n1. Intonación: Vous habitez où? (familiar)\n2. Est-ce que: Où est-ce que vous habitez? (neutro)\n3. Inversión: Où habitez-vous? (formal)" },
+
+  { topic:"Interrogation", q:"Complétez : « ___ vous appelez-vous ? »", tr:"Completa: «¿___ se llama usted?»",
+    opts:["Que","Qui","Comment","Quand"], ans:2,
+    xp:"Mots interrogatifs – liste complète :\n• QUI = quién (personne)\n• QUE / QU'EST-CE QUE = qué (chose)\n• OÙ = dónde (lieu)\n• QUAND = cuándo (temps)\n• COMMENT = cómo (manière)\n• COMBIEN = cuánto (quantité)\n• POURQUOI = por qué (raison)\n→ «vous appelez-vous» demande le NOM → COMMENT\nRègle : «comment vous appelez-vous ?» = demander l'identité\n/ Palabras interrogativas:\nCOMMENT = cómo · QUI = quién · OÙ = dónde\nQUAND = cuándo · COMBIEN = cuánto · POURQUOI = por qué" },
+
+  { topic:"Interrogation", q:"Complétez : « ___ est-ce que vous travaillez ? » (pour demander le lieu)", tr:"Completa: «¿___ trabajan ustedes?» (para preguntar el lugar)",
+    opts:["Qui","Quand","Où","Comment"], ans:2,
+    xp:"Mots interrogatifs de lieu :\n• OÙ = dónde / adónde (lieu ou direction)\n  → Où habitez-vous ? (dónde viven)\n  → Où allez-vous ? (adónde van)\n• D'OÙ = de dónde (origine)\n  → D'où venez-vous ?\nComparer avec les autres :\n• QUAND → temps : Quand partez-vous ?\n• COMMENT → manière : Comment allez-vous ?\n/ Palabras interrogativas de lugar:\nOÙ = dónde/adónde · D'OÙ = de dónde" },
+
+  { topic:"Interrogation", q:"Complétez : « ___ êtes-vous venu en France ? » (pour demander la raison)", tr:"Completa: «¿___ viniste a Francia?» (para preguntar la razón)",
+    opts:["Où","Quand","Comment","Pourquoi"], ans:3,
+    xp:"Mots interrogatifs de cause :\n• POURQUOI = por qué (raison)\n  → Pourquoi êtes-vous venu ?\n  → Parce que (porque) : Parce que j'ai une réunion.\nComparer :\n• POURQUOI : demande la raison → Parce que…\n• COMMENT : demande la manière → En avion, par le train…\n• QUAND : demande le moment → Lundi, à 10h…\n/ Palabras interrogativas:\nPOURQUOI = por qué (pide razón) → respuesta con PARCE QUE\nCOMENT = cómo · QUAND = cuándo · OÙ = dónde" },
+
+  { topic:"Interrogation", q:"Complétez : « ___ personnes participent à la réunion ? »", tr:"Completa: «¿___ personas participan en la reunión?»",
+    opts:["Qui","Que","Combien de","Comment"], ans:2,
+    xp:"Mots interrogatifs de quantité :\n• COMBIEN DE + nom = cuánto/a/os/as\n  → Combien de personnes ? (¿cuántas personas?)\n  → Combien de temps ? (¿cuánto tiempo?)\n  → Combien coûte-t-il ? (¿cuánto cuesta?)\nRègle : COMBIEN DE + nom (sans article)\nComparer : COMBIEN (sans nom) ou COMBIEN DE (avec nom)\n/ Palabras interrogativas de cantidad:\nCOMBIEN DE + nombre (sin artículo):\nCombien de personnes ? · Combien de temps ?" },
+
+  { topic:"Interrogation", q:"Transformez en question : « Vous parlez français. » (avec est-ce que)", tr:"Transforma en pregunta: «Ustedes hablan francés.» (con est-ce que)",
+    opts:["Est-ce que vous parlez français ?","Vous est-ce que parlez français ?","Parlez-vous est-ce que français ?","Est-ce que parlez vous français ?"], ans:0,
+    xp:"Question avec EST-CE QUE :\nStructure : EST-CE QUE + sujet + verbe + reste ?\n✓ Est-ce que vous parlez français ?\n✗ Vous est-ce que parlez français ? (incorrect)\nAvantage : pas d'inversion → plus simple\nDevant voyelle : EST-CE QU' :\n• Est-ce qu'il parle français ?\n• Est-ce qu'elle arrive demain ?\n/ Preguntas con EST-CE QUE:\nEstructura: EST-CE QUE + sujeto + verbo + resto?\nAnte vocal: EST-CE QU': Est-ce qu'il parle?" },
+
+  { topic:"Interrogation", q:"Complétez : « ___ est l'ambassadeur ? » (pour demander une personne)", tr:"Completa: «¿___ es el embajador?» (para preguntar por una persona)",
+    opts:["Que","Qu'est-ce que","Qui","Comment"], ans:2,
+    xp:"Mots interrogatifs pour les personnes :\n• QUI = quién (pour les PERSONNES)\n  → Qui est l'ambassadeur ? (¿quién es el embajador?)\n  → Qui vient à la réunion ?\nComparer QUI vs QUE :\n• QUI → personne : Qui parle ? · Qui invites-tu ?\n• QUE/QUOI → chose : Que fait-il ? · Tu fais quoi ?\n/ Palabras interrogativas:\nQUI = quién (para PERSONAS)\nQUE/QUOI = qué (para COSAS)\nQui vient ? · Que fait-il ?" },
+
+  { topic:"Interrogation", q:"Complétez : « ___ vous rentrez en France ? » (pour demander le moment)", tr:"Completa: «¿___ regresan a Francia?» (para preguntar el momento)",
+    opts:["Où","Pourquoi","Quand","Comment"], ans:2,
+    xp:"Mots interrogatifs de temps :\n• QUAND = cuándo (moment)\n  → Quand partez-vous ? (¿cuándo salen?)\n  → Quand est-ce que vous rentrez ?\n• À QUELLE HEURE = ¿a qué hora?\n• DEPUIS QUAND = ¿desde cuándo?\n• JUSQU'À QUAND = ¿hasta cuándo?\n→ «pour demander le moment» = QUAND\n/ Palabras interrogativas de tiempo:\nQUAND = cuándo · à quelle heure = ¿a qué hora?\ndepuis quand = ¿desde cuándo?" },
+
+  { topic:"Interrogation", q:"Complétez : « ___ allez-vous ? » (pour demander l'état de santé)", tr:"Completa: «¿___ están ustedes?» (para preguntar el estado de salud)",
+    opts:["Que","Qui","Où","Comment"], ans:3,
+    xp:"Mots interrogatifs de manière :\n• COMMENT = cómo (manière, état, façon)\n  → Comment allez-vous ? (¿cómo están?)\n  → Comment s'appelle-t-il ? (¿cómo se llama?)\n  → Comment voyagez-vous ? (¿cómo viajan?)\n• Réponse typique : Très bien, merci. / Bien, et vous ?\n/ Palabras interrogativas de manera:\nCOMMENT = cómo (manera, estado, forma)\nComment allez-vous? → Très bien, merci." },
+
+  { topic:"Interrogation", q:"Quelle est la forme formelle de « Tu habites où ? »", tr:"¿Cuál es la forma formal de «¿Dónde vives?»?",
+    opts:["Vous habitez où ?","Où est-ce que vous habitez ?","Où habitez-vous ?","Où vous habitez ?"], ans:2,
+    xp:"Trois niveaux de formalité pour poser une question :\n1. FAMILIER (intonation) : Tu habites où ? / Vous habitez où ? (↗)\n2. COURANT (est-ce que) : Où est-ce que vous habitez ?\n3. FORMEL (inversion) : Où habitez-vous ?\nDans un contexte diplomatique ou professionnel → niveau 2 ou 3\nRègle d'inversion : verbe + sujet (tiret entre les deux) + ?\n/ Tres niveles de formalidad:\n1. Familiar: Vous habitez où? (entonación)\n2. Corriente: Où est-ce que vous habitez?\n3. Formal: Où habitez-vous? (inversión)" },
+
+  // ── PRONOMINAUX (8) ───────────────────────────────────────────
+  { topic:"Pronominaux", q:"Complétez : « Je ___ lève à 7h. »", tr:"Completa: «Yo ___ levanto a las 7h.»",
+    opts:["me","te","se","nous"], ans:0,
+    xp:"Verbes pronominaux – tableau des pronoms réfléchis :\nje ME lève · tu TE lèves · il/elle SE lève\nnous NOUS levons · vous VOUS levez · ils/elles SE lèvent\nSE LEVER – conjugaison complète :\nje me LÈVE · tu te LÈVES · il se LÈVE\nnous nous LEVONS · vous vous LEVEZ · ils se LÈVENT\n→ sujet «je» → pronom réfléchi ME → je ME lève\n/ Verbos pronominales – pronombres reflexivos:\nje ME · tu TE · il/elle SE · nous NOUS · vous VOUS · ils/elles SE\n→ sujeto «je» → pronom ME" },
+
+  { topic:"Pronominaux", q:"Complétez : « Tu ___ couches à quelle heure ? »", tr:"Completa: «¿A qué hora ___ acuestas?»",
+    opts:["me","te","se","vous"], ans:1,
+    xp:"Verbes pronominaux – tableau des pronoms réfléchis :\nje me couche · tu TE couches · il/elle se couche\nnous nous couchons · vous vous couchez · ils/elles se couchent\nSE COUCHER – conjugaison complète :\nje me COUCHE · tu te COUCHES · il se COUCHE\nnous nous COUCHONS · vous vous COUCHEZ · ils se COUCHENT\n→ sujet «tu» → pronom TE → tu TE couches\n/ Verbos pronominales:\nsujeto «tu» → pronom TE → tu TE couches" },
+
+  { topic:"Pronominaux", q:"Complétez : « Elle ___ habille avant le travail. »", tr:"Completa: «Ella ___ viste antes del trabajo.»",
+    opts:["me","te","se","nous"], ans:2,
+    xp:"Verbes pronominaux – tableau des pronoms réfléchis :\nje m'habille · tu t'habilles · il/elle SE HABILLE\nnous nous habillons · vous vous habillez · ils/elles s'habillent\nNote : devant voyelle, ME/TE/SE → M'/T'/S' (élision)\n• je M'habille · tu T'habilles · il S'habille\nMais : elle SE prépare (p = consonne, pas d'élision)\n→ sujet «elle» → S'habille (élision : SE → S')\n/ Verbos pronominales:\nje m'habille · tu t'habilles · il/elle s'habille\nÉlisión ante vocal: ME/TE/SE → M'/T'/S'" },
+
+  { topic:"Pronominaux", q:"Complétez : « Nous ___ réveillons tard le week-end. »", tr:"Completa: «Nosotros ___ despertamos tarde el fin de semana.»",
+    opts:["me","te","se","nous"], ans:3,
+    xp:"Verbes pronominaux – tableau des pronoms réfléchis :\nje me réveille · tu te réveilles · il/elle se réveille\nnous NOUS réveillons · vous vous réveillez · ils/elles se réveillent\n→ sujet «nous» → pronom NOUS → nous NOUS réveillons\nNote : NOUS se répète (pronom sujet + pronom réfléchi) !\n/ Verbos pronominales:\nnous NOUS réveillons (el pronom NOUS se repite)\nnous = sujeto + nous = reflexivo" },
+
+  { topic:"Pronominaux", q:"Complétez : « Ils ___ retrouvent à l'aéroport. »", tr:"Completa: «Ellos ___ encuentran en el aeropuerto.»",
+    opts:["me","te","se","nous"], ans:2,
+    xp:"Verbes pronominaux – tableau des pronoms réfléchis :\nje me retrouve · tu te retrouves · il/elle se retrouve\nnous nous retrouvons · vous vous retrouvez · ils/elles SE RETROUVENT\n→ sujet «ils» → pronom SE → ils SE retrouvent\nSE RETROUVER = retrouvarse, reunirse\nNote : verbes pronominaux réciproques : ils SE voient · ils SE parlent · ils SE retrouvent\n/ Verbos pronominales:\nsujeto «ils» → pronom SE → ils SE retrouvent\nVerbo reciproco: ils se retrouvent (se encuentran/se ven)" },
+
+  { topic:"Pronominaux", q:"Comment forme-t-on la NÉGATION d'un verbe pronominal ?", tr:"¿Cómo se forma la NEGACIÓN de un verbo pronominal?",
+    opts:["Je me ne lève pas.","Je ne me lève pas.","Je me lève ne pas.","Ne je me lève pas."], ans:1,
+    xp:"Négation des verbes pronominaux :\nstructure : sujet + NE + pronom réfléchi + verbe + PAS\n✓ Je NE me lève PAS.\n✓ Il NE se réveille PAS.\n✓ Nous NE nous couchons PAS tôt.\nRègle : NE précède le pronom réfléchi, PAS suit le verbe :\nje [NE] [me] lève [PAS]\n/ Negación de verbos pronominales:\nsujeto + NE + pronombre reflexivo + verbo + PAS\nje ne me lève pas · il ne se réveille pas" },
+
+  { topic:"Pronominaux", q:"Complétez : « Je ___ appelle tous les jours. » (= nous, réciproque)", tr:"Completa: «Nos ___ llamamos todos los días.» (recíproco)",
+    opts:["me","te","se","nous"], ans:3,
+    xp:"Verbes pronominaux réciproques :\nLes verbes réciproques expriment une action MUTUELLE entre plusieurs personnes :\n• Nous nous APPELONS = nos llamamos (mutuellement)\n• Ils se VOIENT souvent = se ven seguido\n• Vous vous PARLEZ = se hablan\nConjugaison : ils/nous/vous uniquement (plusieurs personnes)\n→ «nous» = pronom réfléchi NOUS\n/ Verbos pronominales recíprocos:\nacción MUTUA entre varias personas:\nnous nous appelons · ils se voient · vous vous parlez" },
+
+  { topic:"Pronominaux", q:"À l'infinitif, comment s'écrit « s'asseoir » avec « vous » ?", tr:"En infinitivo, ¿cómo se escribe «s'asseoir» con «vous»?",
+    opts:["Vous asseoir.","Vous s'asseoir.","Vous vous asseoir.","Vous asseyez."], ans:2,
+    xp:"Verbes pronominaux à l'infinitif :\nQuand un verbe pronominal est à l'INFINITIF, le pronom s'accorde avec le sujet :\n• Je veux ME lever. · Tu veux TE lever.\n• Il doit SE lever. · Nous devons NOUS lever.\n• Vous pouvez VOUS asseoir.\nRègle : le pronom réfléchi avant l'infinitif concorde avec le sujet principal\n/ Verbos pronominales en infinitivo:\nel pronombre reflexivo concuerda con el sujeto:\nje veux me lever · vous pouvez vous asseoir" },
+
+  // ── POUVOIR / DEVOIR / VOULOIR (12) ───────────────────────────
+  { topic:"Modaux", q:"Complétez : « Je ___ parler avec l'ambassadeur. » (capacité)", tr:"Completa: «Yo ___ hablar con el embajador.» (capacidad)",
+    opts:["peux","dois","veux","vais"], ans:0,
+    xp:"POUVOIR – présent complet :\nje PEUX · tu peux · il/elle peut\nnous pouvons · vous pouvez · ils/elles peuvent\n→ «capacité» = POUVOIR → je PEUX\nSens de POUVOIR :\n• capacité : je peux courir vite.\n• permission : tu peux partir.\n• possibilité : il peut pleuvoir.\n/ POUVOIR – presente completo :\nje PEUX · tu peux · il peut\nnos. pouvons · vos. pouvez · ils peuvent\n→ capacidad/permiso/posibilidad = POUVOIR" },
+
+  { topic:"Modaux", q:"Complétez : « Tu ___ remplir ce formulaire. » (obligation)", tr:"Completa: «Tú ___ rellenar este formulario.» (obligación)",
+    opts:["peux","dois","veux","sais"], ans:1,
+    xp:"DEVOIR – présent complet :\nje dois · tu DOIS · il/elle doit\nnous devons · vous devez · ils/elles doivent\n→ «obligation» = DEVOIR → tu DOIS\nSens de DEVOIR :\n• obligation : tu dois partir. (tienes que)\n• probabilité : il doit être à Paris. (debe de estar)\n• conseil : tu devrais essayer. (deberías)\n/ DEVOIR – presente completo :\nje dois · tu DOIS · il doit\nnos. devons · vos. devez · ils doivent\n→ obligación = DEVOIR" },
+
+  { topic:"Modaux", q:"Complétez : « Elle ___ visiter Bruxelles. » (désir)", tr:"Completa: «Ella ___ visitar Bruselas.» (deseo)",
+    opts:["peut","doit","veut","sait"], ans:2,
+    xp:"VOULOIR – présent complet :\nje veux · tu veux · il/elle VEUT\nnous voulons · vous voulez · ils/elles veulent\n→ «désir» = VOULOIR → elle VEUT\nSens de VOULOIR :\n• désir : je veux voyager. (quiero)\n• demande polie : je voudrais un café. (quisiera – conditionnel)\nAttention : «je veux» est direct, «je voudrais» est poli\n/ VOULOIR – presente completo :\nje veux · tu veux · il/elle VEUT\nnos. voulons · vos. voulez · ils veulent\n→ deseo = VOULOIR" },
+
+  { topic:"Modaux", q:"Complétez : « Nous ___ finir ce rapport aujourd'hui. » (obligation)", tr:"Completa: «Nosotros ___ terminar este informe hoy.» (obligación)",
+    opts:["pouvons","devons","voulons","allons"], ans:1,
+    xp:"DEVOIR – présent complet :\nje dois · tu dois · il/elle doit\nnous DEVONS · vous devez · ils/elles doivent\n→ «obligation» = DEVOIR → nous DEVONS\nDEVOIR + infinitif = obligation :\n• nous devons finir (tenemos que terminar)\n/ DEVOIR – presente completo :\nnos. DEVONS · vos. devez · ils doivent\n→ obligación = DEVOIR\nnous devons finir = tenemos que terminar" },
+
+  { topic:"Modaux", q:"Complétez : « Vous ___ assister à la conférence. » (capacité/permission)", tr:"Completa: «Ustedes ___ asistir a la conferencia.» (capacidad/permiso)",
+    opts:["pouvez","devez","voulez","savez"], ans:0,
+    xp:"POUVOIR – présent complet :\nje peux · tu peux · il/elle peut\nnous pouvons · vous POUVEZ · ils/elles peuvent\n→ «capacité/permission» = POUVOIR → vous POUVEZ\nDistinguer POUVOIR vs DEVOIR :\n• POUVOIR = capacité ou permission (puede)\n• DEVOIR = obligation (debe/tiene que)\n→ «vous pouvez» = vous êtes autorisés\n/ POUVOIR – presente:\nvos. POUVEZ (capacidad/permiso)\nPOUVOIR vs DEVOIR:\npouvoir = puede · devoir = debe/tiene que" },
+
+  { topic:"Modaux", q:"Complétez : « Ils ___ prendre une décision rapidement. » (nécessité)", tr:"Completa: «Ellos ___ tomar una decisión rápidamente.» (necesidad)",
+    opts:["peuvent","doivent","veulent","savent"], ans:1,
+    xp:"DEVOIR – présent complet :\nje dois · tu dois · il/elle doit\nnous devons · vous devez · ils/elles DOIVENT\n→ «nécessité» = DEVOIR → ils DOIVENT\nDEVOIR + infinitif :\n• ils doivent décider (tienen que decidir)\n• elle doit partir (tiene que irse)\n• je dois finir (tengo que terminar)\n/ DEVOIR – presente:\nnos. devons · vos. devez · ils/elles DOIVENT\n→ necesidad = DEVOIR + infinitivo" },
+
+  { topic:"Modaux", q:"Complétez : « Je ___ visiter le Musée d'Orsay. » (désir / souhait)", tr:"Completa: «Yo ___ visitar el Musée d'Orsay.» (deseo)",
+    opts:["peux","dois","veux","suis"], ans:2,
+    xp:"VOULOIR – présent complet :\nje VEUX · tu veux · il/elle veut\nnous voulons · vous voulez · ils/elles veulent\n→ «désir» = VOULOIR → je VEUX\nFormes utiles de VOULOIR :\n• je veux = quiero (désir direct)\n• je voudrais = quisiera (souhait poli – conditionnel)\n• vous voulez ? = ¿quieren ustedes?\n/ VOULOIR – presente:\nje VEUX · tu veux · il veut\nnos. voulons · vos. voulez · ils veulent\njE VEUX = quiero · je voudrais = quisiera (poli)" },
+
+  { topic:"Modaux", q:"Quelle phrase exprime une OBLIGATION ?", tr:"¿Qué oración expresa una OBLIGACIÓN?",
+    opts:["Je peux partir.","Je veux partir.","Je dois partir.","Je sais partir."], ans:2,
+    xp:"Les trois modaux et leur sens :\n• POUVOIR + inf. = capacité/permission : je PEUX partir. (puedo)\n• VOULOIR + inf. = désir : je VEUX partir. (quiero)\n• DEVOIR + inf. = obligation/nécessité : je DOIS partir. (debo/tengo que)\nDistinction clé :\n→ Je peux = je suis capable / autorisé\n→ Je veux = je le désire\n→ Je dois = c'est obligatoire / nécessaire\n/ Los tres modales:\npouvoir = poder (capacidad/permiso)\nvouloir = querer (deseo)\ndevoir = deber/tener que (obligación)" },
+
+  { topic:"Modaux", q:"Complétez : « Tu ne ___ pas fumer ici. » (interdiction)", tr:"Completa: «No ___ fumar aquí.» (prohibición)",
+    opts:["peux","dois","veux","sais"], ans:0,
+    xp:"POUVOIR à la négative = interdiction :\n• Tu ne PEUX pas fumer. = No puedes fumar. (interdiction)\n• Tu ne DOIS pas fumer. = No debes fumar. (aussi correct = obligation négative)\nDistinction :\n• Ne pas POUVOIR = incapacité ou interdiction\n• Ne pas DEVOIR = obligation négative\nLes deux sont utilisés pour l'interdiction, selon le contexte.\n/ POUVOIR en negativo = prohibición:\ntu ne peux pas = no puedes (prohibición)\ntu ne dois pas = no debes (obligación negativa)" },
+
+  { topic:"Modaux", q:"Complétez poliment : « Je ___ un café, s'il vous plaît. »", tr:"Completa educadamente: «Yo ___ un café, por favor.»",
+    opts:["veux","voudrais","dois","peux"], ans:1,
+    xp:"VOULOIR au conditionnel = demande POLIE :\n• Je VEUX un café. (direct, peu poli)\n• Je VOUDRAIS un café. (poli – conditionnel présent)\nVOULOIR au conditionnel (voudrais) :\nje voudrais · tu voudrais · il/elle voudrait\nnous voudrions · vous voudriez · ils/elles voudraient\nRègle : dans un contexte formel ou de service, toujours utiliser VOUDRAIS\n/ VOULOIR en condicional = petición EDUCADA:\nje VOUDRAIS = quisiera (educado)\nje VEUX = quiero (directo, poco educado)" },
+
+  { topic:"Modaux", q:"Complétez : « Il ___ comprendre la situation. » (effort de compréhension)", tr:"Completa: «Él ___ entender la situación.» (esfuerzo de comprensión)",
+    opts:["peut","doit","veut","peux"], ans:1,
+    xp:"DEVOIR – sens de nécessité/obligation morale :\n• il DOIT comprendre = debe entender / tiene que entender\nDEVOIR – présent complet :\nje dois · tu dois · il/elle DOIT\nnous devons · vous devez · ils/elles doivent\n→ «effort de compréhension» implique une obligation → DOIT\nContexte moral : il doit faire des efforts = tiene que esforzarse\n/ DEVOIR – presente:\nil/elle DOIT = debe / tiene que\nContexo de obligación moral: il doit comprendre" },
+
+  { topic:"Modaux", q:"Complétez : « Nous ___ partir avant 18h. » (obligation externe)", tr:"Completa: «Nosotros ___ salir antes de las 18h.» (obligación externa)",
+    opts:["pouvons","devons","voulons","sommes"], ans:1,
+    xp:"DEVOIR – présent complet (rappel) :\nje dois · tu dois · il/elle doit\nnous DEVONS · vous devez · ils/elles doivent\n→ «obligation externe» (une règle impose cela) = DEVOIR → nous DEVONS\nRésumé des trois modaux :\n• POUVOIR : capacité/permission\n• DEVOIR : obligation/nécessité\n• VOULOIR : désir/souhait\n/ DEVOIR – presente:\nresumen de modales:\npouvoir = poder · devoir = deber/tener que · vouloir = querer" },
+
+  // ── IMPÉRATIF (8) ─────────────────────────────────────────────
+  { topic:"Impératif", q:"Complétez l'impératif : « ___ la porte ! » (tu / ouvrir)", tr:"Completa el imperativo: «¡___ la puerta!» (tú / abrir)",
+    opts:["Ouvres","Ouvre","Ouvrez","Ouvrons"], ans:1,
+    xp:"IMPÉRATIF – formation pour les verbes en -ER et irréguliers :\n• Verbes en -ER (et ALLER) → imperativ TU : radical SANS -s !\n  → parle ! (pas parles) · écoute ! · ouvre ! (ouvrir = irrégulier)\n• Verbes en -IR/-RE → gardent le -s :\n  → finis ! · prends !\nOUVRIR au présent : j'ouvre · tu OUVRES → impératif : OUVRE (sans -s)\nRègle exception : verbes en -ER → impératif TU sans -s\n/ IMPERATIVO:\nverbes en -ER → imperativo TU sin -s: parle! écoute!\nverbes en -IR → con -s: finis! · verbes en -RE: prends!" },
+
+  { topic:"Impératif", q:"Complétez l'impératif : « ___ attentifs ! » (vous / être)", tr:"Completa el imperativo: «¡Sean atentos!» (ustedes / être)",
+    opts:["Êtes","Soyez","Sommes","Sont"], ans:1,
+    xp:"IMPÉRATIF IRRÉGULIER – ÊTRE :\nÊTRE : sois (tu) · soyons (nous) · SOYEZ (vous)\n→ aucun rapport avec les formes du présent !\nAutres irréguliers à l'impératif :\n• AVOIR : aie · ayons · ayez\n• SAVOIR : sache · sachons · sachez\n• VOULOIR : veuille · veuillons · veuillez (dans les courriers)\nNote : «veuillez» s'emploie dans les lettres formelles\n/ IMPERATIVO IRREGULAR – ÊTRE:\nÊTRE: sois (tú) · soyons (nos.) · SOYEZ (vos.)\nHAVER: aie · ayons · ayez\nMuy formales: veuillez (en cartas formales)" },
+
+  { topic:"Impératif", q:"Complétez l'impératif : « ___ vos documents ! » (vous / préparer)", tr:"Completa el imperativo: «¡___ sus documentos!» (ustedes / preparar)",
+    opts:["Prépare","Préparez","Préparons","Préparais"], ans:1,
+    xp:"IMPÉRATIF – trois personnes :\n• 2e pers. sing. (TU) : parle · mange · finis\n• 1re pers. plur. (NOUS) : parlons · mangeons · finissons\n• 2e pers. plur. (VOUS) : PARLEZ · mangez · finissez\nPRÉPARER :\n• prépare (tu) · préparons (nous) · PRÉPAREZ (vous)\n→ «vous» → PRÉPAREZ\n/ IMPERATIVO – tres personas:\nTU: parle · NOUS: parlons · VOUS: parlez\nPRÉPARER: prépare · préparons · PRÉPAREZ" },
+
+  { topic:"Impératif", q:"Complétez l'impératif : « ___ ensemble ! » (nous / travailler)", tr:"Completa el imperativo: «¡___ juntos!» (nosotros / trabajar)",
+    opts:["Travaillez","Travaille","Travaillons","Travaillait"], ans:2,
+    xp:"IMPÉRATIF – formation de NOUS :\n• NOUS à l'impératif = forme du présent SANS pronom sujet\n  → nous travaillons → TRAVAILLONS !\n  → nous mangeons → MANGEONS !\n  → nous partons → PARTONS !\nSens : équivalent du «let's» en anglais\n→ Travaillons = ¡Trabajemos!\n/ IMPERATIVO – forma NOUS:\nNOUS: forma del presente sin sujeto\nnous travaillons → TRAVAILLONS!\nEquivalente al «let's» inglés: Partons! = ¡Vámonos!" },
+
+  { topic:"Impératif", q:"Quelle forme est correcte à l'impératif TU pour «aller» ?", tr:"¿Qué forma es correcta en imperativo TÚ de «aller»?",
+    opts:["Allez","Vas","Va","Aller"], ans:2,
+    xp:"IMPÉRATIF IRRÉGULIER – ALLER :\nALLER : va (tu) · allons (nous) · allez (vous)\n→ «tu» → VA (pas VAS !)\nRègle : verbes en -ER → impératif TU SANS -s :\n• parle (pas parles) · écoute (pas écoutes) · VA (pas vas)\nException : «vas-y» (devant y ou en, on remet le -s pour la liaison)\n→ Vas-y ! (¡Vamos! / ¡Ve!) mais : Va au bureau.\n/ IMPERATIVO IRREGULAR – ALLER:\nALLER: va (tú) · allons (nos.) · allez (vos.)\nVA (sin -s) · excepción: VAS-Y (ante y/en, con -s)" },
+
+  { topic:"Impératif", q:"Mettez à la NÉGATIVE : « Parlez fort ! »", tr:"Pon en NEGATIVO: «¡Hablen fuerte!»",
+    opts:["Pas parlez fort !","Ne parlez fort pas !","Ne parlez pas fort !","Parlez ne pas fort !"], ans:2,
+    xp:"Impératif NÉGATIF :\nstructure : NE + verbe impératif + PAS\n✓ Ne parlez PAS fort !\n✓ Ne mange PAS trop !\n✓ N'oublie PAS !\nRègle : même position que pour la négation ordinaire :\n• NE précède le verbe, PAS le suit.\n• Devant voyelle : N' → N'oublie pas ! · N'arrive pas en retard !\n/ Imperativo NEGATIVO:\nestructura: NE + verbo imperativo + PAS\nNe parlez pas fort!\nNe mange pas trop!\nAnte vocal: N': N'oublie pas!" },
+
+  { topic:"Impératif", q:"Complétez : « N'___ pas en retard ! » (tu / être)", tr:"Completa: «¡No ___ tarde!» (tú / ser/estar)",
+    opts:["êtes","sois","es","soit"], ans:1,
+    xp:"IMPÉRATIF NÉGATIF + ÊTRE irrégulier :\nÊTRE à l'impératif : sois (tu) · soyons (nous) · soyez (vous)\nNégatif : ne SOIS pas · ne SOYONS pas · ne SOYEZ pas\n→ N'oublie pas : SOIS vient de l'impératif, pas du présent «es» !\nExemples :\n• Sois à l'heure ! → Ne sois pas en retard !\n• Soyez prudents ! → Ne soyez pas imprudents !\n/ Imperativo negativo + ÊTRE irregular:\nÊTRE: sois · soyons · soyez\nNEGATIVO: ne sois pas · ne soyez pas\nATENCIÓN: sois (imperativo) ≠ es (presente)" },
+
+  { topic:"Impératif", q:"Laquelle est une instruction d'un professeur à ses élèves ?", tr:"¿Cuál es una instrucción de un profesor a sus alumnos?",
+    opts:["Vous ouvrez le livre.","Ouvre le livre.","Ouvrez vos livres !","Ouvrir le livre."], ans:2,
+    xp:"Impératif – usage et formes :\n• VOUS → impératif = verbe conjugué au présent SANS pronom\n  → (vous ouvrez) → OUVREZ ! (imperativo)\n• TU → impératif : OUVRE !\n• NOUS → OUVRONS (ensemble !) !\nDistinguer :\n• «Vous ouvrez le livre.» = indicatif (constatación)\n• «Ouvrez vos livres !» = impératif (instruction)\n/ Imperativo – uso:\nVOUS: OUVREZ! (sin pronombre sujeto)\nTU: OUVRE! · NOUS: OUVRONS!\nIndicativo vs imperativo: «vous ouvrez» vs «Ouvrez!»" },
+
+  // ── COD (8) ───────────────────────────────────────────────────
+  { topic:"COD", q:"Remplacez par un pronom : « Il lit le rapport. »", tr:"Reemplaza por un pronombre: «Él lee el informe.»",
+    opts:["Il lui lit.","Il le lit.","Il la lit.","Il les lit."], ans:1,
+    xp:"Pronoms COD (Complément d'Objet Direct) :\n• LE = lo (masc. sing.) : le rapport → le lit\n• LA = la (fém. sing.) : la lettre → la lit\n• LES = los/las (pluriel) : les documents → les lit\n• L' = lo/la (devant voyelle) : l'email → l'envoie\nRègle : le pronom COD se place AVANT le verbe :\n• Il lit LE rapport. → Il LE lit.\n/ Pronombres COD:\nLE = lo (masc. sing.) · LA = la (fem. sing.)\nLES = los/las (plural) · L' = lo/la (ante vocal)\nPositión: ANTES del verbo: Il le lit." },
+
+  { topic:"COD", q:"Remplacez par un pronom : « Elle prépare la réunion. »", tr:"Reemplaza por un pronombre: «Ella prepara la reunión.»",
+    opts:["Elle la prépare.","Elle le prépare.","Elle les prépare.","Elle lui prépare."], ans:0,
+    xp:"Pronoms COD :\n• LA = la (fém. sing.) : la réunion → la prépare\n• LE = lo (masc. sing.) : le rapport → le prépare\n• LES = los/las (pluriel)\nRègle : accord en genre et nombre avec le NOM remplacé :\n• «réunion» est féminin → pronom LA\n• pronom se place AVANT le verbe : Elle LA prépare.\n/ Pronombres COD:\n«réunion» femenino → pronom LA\nElle prépare LA réunion. → Elle LA prépare.\nEl pronombre va ANTES del verbo." },
+
+  { topic:"COD", q:"Remplacez par un pronom : « Je lis les documents. »", tr:"Reemplaza por un pronombre: «Yo leo los documentos.»",
+    opts:["Je lui lis.","Je le lis.","Je la lis.","Je les lis."], ans:3,
+    xp:"Pronoms COD :\n• LES = los/las (PLURIEL, masc. ou fém.) : les documents → les lis\n• LE = lo (sing. masc.) · LA = la (sing. fém.)\nRègle : accord en NOMBRE avec le nom remplacé :\n• «documents» est pluriel → pronom LES\n• Je lis LES documents. → Je LES lis.\n/ Pronombres COD:\n«documents» plural → pronom LES\nJe LES lis. (pronom avant el verbo)\nLES = todos los plurales (masc. y fem.)" },
+
+  { topic:"COD", q:"Remplacez par un pronom : « Il invite l'ambassadrice. »", tr:"Reemplaza por un pronombre: «Él invita a la embajadora.»",
+    opts:["Il l'invite.","Il lui invite.","Il la invite.","Il le invite."], ans:0,
+    xp:"Pronoms COD – élision :\n• L' = lo ou la (DEVANT VOYELLE ou H muet)\n  → l'ambassadrice (f.) → Il L'invite.\n  → l'ambassadeur (m.) → Il L'invite.\nRègle : LA et LE → L' devant voyelle ou H muet (élision obligatoire)\n• Il voit LA directrice → Il LA voit (consonne)\n• Il invite L'ambassadrice → Il L'invite (voyelle)\n/ Pronombres COD – elisión:\nLA/LE → L' ante vocal o H muda:\nl'ambassadrice → Il l'invite (élision obligatoire)" },
+
+  { topic:"COD", q:"Quelle est la position du pronom COD à l'infinitif ?", tr:"¿Cuál es la posición del pronombre COD en infinitivo?",
+    opts:["Je veux le lire.","Je le veux lire.","Je veux lire le.","Je le lire veux."], ans:0,
+    xp:"Position du pronom COD avec un infinitif :\nStructure : verbe conjugué + pronom COD + infinitif\n→ Je veux LE lire. (Le = le document)\n→ Je dois LA finir. (La = la réunion)\n→ Je peux LES envoyer. (Les = les emails)\nRègle : le pronom COD se place AVANT l'infinitif (le verbe qu'il complète)\n/ Posición del pronombre COD con infinitivo:\nverbe conjugué + pronom COD + infinitivo:\nJe veux LE lire. · Je dois LA finir.\nEl pronom va ANTES del infinitivo." },
+
+  { topic:"COD", q:"Complétez : « Tu connais Paris ? – Oui, je ___ connais bien. »", tr:"Completa: «¿Conoces París? – Sí, ___ conozco bien.»",
+    opts:["le","la","lui","les"], ans:0,
+    xp:"Pronoms COD – replacer un nom de ville :\n• Les villes sont généralement considérées comme FÉMININES en français\n• Mais comme complément COD d'un verbe, on utilise souvent LE/LA selon l'habitude\n• «Paris» → «le» (usage établi : «je le connais»)\nRègle générale :\n• personne masc. → LE : « Il connaît le directeur. → Il le connaît. »\n• personne fém. → LA : « Elle connaît la directrice. → Elle la connaît. »\n/ Pronombres COD:\nParis → je le connais (uso establecido)\nDirecteur (masc.) → le · Directrice (fem.) → la" },
+
+  { topic:"COD", q:"Remplacez : « Nous regardons les informations. »", tr:"Reemplaza: «Nosotros vemos las noticias.»",
+    opts:["Nous les regardons.","Nous leur regardons.","Nous le regardons.","Nous la regardons."], ans:0,
+    xp:"Pronoms COD – pluriel :\n• LES remplace TOUS les noms pluriels (masc. ET fém.)\n  → les informations → LES regardons\n  → les documents → LES regardons\nRègle : LES se place AVANT le verbe :\n• Nous regardons LES informations. → Nous LES regardons.\nDistinction COD vs COI :\n• COD : répondre à «quoi ?» → pronom LE/LA/LES\n• COI : répondre à «à qui ?» → pronom LUI/LEUR\n/ Pronombres COD vs COI:\nCOD (¿qué?) → LE/LA/LES\nCOI (¿a quién?) → LUI/LEUR\nles informations → Nous LES regardons." },
+
+  { topic:"COD", q:"Complétez : « Il n'___ lit pas. » (= il ne lit pas le rapport)", tr:"Completa: «Él no ___ lee.» (= no lee el informe)",
+    opts:["le lit pas","le lit","le","la"], ans:2,
+    xp:"Pronom COD à la NÉGATIVE :\nstructure : NE + pronom COD + verbe + PAS\n✓ Il ne LE lit pas.\nRègle : à la négative, le pronom COD reste AVANT le verbe :\n• Il lit le rapport. → Il le lit. → Il ne LE lit PAS.\n• Elle prépare la réunion. → Elle la prépare. → Elle ne LA prépare PAS.\n/ Pronombre COD en NEGATIVO:\nestructura: NE + pronom COD + verbe + PAS\nIl ne LE lit pas. · Elle ne LA prépare pas.\nEl pronombre permanece antes del verbo." },
+
+  // ── COI (6) ───────────────────────────────────────────────────
+  { topic:"COI", q:"Remplacez par un pronom : « Je parle au directeur. »", tr:"Reemplaza por un pronombre: «Yo le hablo al director.»",
+    opts:["Je le parle.","Je lui parle.","Je la parle.","Je leur parle."], ans:1,
+    xp:"Pronoms COI (Complément d'Objet Indirect) :\n• LUI = le/lui (sing., masc. OU fém.) : au directeur → lui parle\n• LEUR = les (pluriel, masc. OU fém.) : aux directeurs → leur parle\nRègle : COI = «parler À quelqu'un» → LUI (sing.) / LEUR (plur.)\nDistinguer :\n• Je parle au directeur. (COI → LUI) → Je LUI parle.\n• Je vois le directeur. (COD → LE) → Je LE vois.\n/ Pronombres COI:\nLUI = le/lui (sing.) · LEUR = les (plur.)\nCOI = hablar A alguien → LUI/LEUR\nCOD (ver a alguien) → LE/LA/LES" },
+
+  { topic:"COI", q:"Remplacez par un pronom : « Elle téléphone à ses collègues. »", tr:"Reemplaza por un pronombre: «Ella llama a sus colegas.»",
+    opts:["Elle leur téléphone.","Elle les téléphone.","Elle lui téléphone.","Elle leur téléphone leur."], ans:0,
+    xp:"Pronoms COI – pluriel :\n• LEUR = le/les (PLURIEL) : à ses collègues → leur téléphone\nLEUR (COI plur.) vs LES (COD plur.) :\n• COI «à»: elle téléphone À ses collègues → LEUR\n• COD direct: elle voit ses collègues → LES\nRègle : si le verbe est suivi de «à + personne» → COI → LUI ou LEUR\n/ Pronombres COI – plural:\nLEUR = les/les (plural) para COI\ncollègues → LEUR téléphone\nCOI (con «à»): LEUR · COD (sin «à»): LES" },
+
+  { topic:"COI", q:"Complétez : « Je ___ écris un email. » (= à l'ambassadeur)", tr:"Completa: «Yo ___ escribo un correo.» (= al embajador)",
+    opts:["le","la","lui","leur"], ans:2,
+    xp:"Pronoms COI :\n• LUI remplace «à + personne singulière» (masc. OU fém.) :\n  → écrire à l'ambassadeur → lui écris\n  → écrire à la secrétaire → lui écris aussi !\nNote : LUI = masc. ET fém. singulier en COI !\n(uniquement «lui» masc. en pronom tonique : lui, il)\n→ Je LUI écris un email.\nPosition : AVANT le verbe\n/ Pronombres COI:\nLUI = a él O a ella (singular)\nécrire à l'ambassadeur → Je LUI écris.\nLUI = masc. Y fem. singular en COI" },
+
+  { topic:"COI", q:"Choisissez le bon pronom COI : « Nous ___ envoyons une invitation. » (= aux ambassadeurs)", tr:"Elige el pronombre COI correcto: «Nosotros ___ enviamos una invitación.» (= a los embajadores)",
+    opts:["le","la","lui","leur"], ans:3,
+    xp:"Pronoms COI – singulier vs pluriel :\n• LUI = à + personne SINGULIÈRE : à l'ambassadeur → lui envoyons\n• LEUR = à + personne PLURIELLE : aux ambassadeurs → leur envoyons\nRègle : accord en NOMBRE avec le groupe de personnes :\n• sing. → LUI · plur. → LEUR\n→ «aux ambassadeurs» est pluriel → LEUR envoyons\n/ Pronombres COI – singular vs plural:\nLUI = sing. · LEUR = plur.\naux ambassadeurs (plural) → LEUR envoyons" },
+
+  { topic:"COI", q:"Quelle phrase contient un COI correctement remplacé ?", tr:"¿Qué oración tiene un COI correctamente reemplazado?",
+    opts:["Je réponds l'email → Je lui réponds.","Je réponds à l'email → Je lui réponds.","Je réponds à mon chef → Je le réponds.","Je réponds à mon chef → Je leur réponds."], ans:1,
+    xp:"COI – identification et remplacement :\nCOI = complément introduit par «À» :\n• répondre À quelqu'un → COI → LUI (sing.) / LEUR (plur.)\n• Je réponds À mon chef (sing.) → Je LUI réponds.\nErreur fréquente : confondre COD et COI :\n• Je vois MON CHEF (COD = pas de «à») → Je LE vois.\n• Je réponds À MON CHEF (COI = avec «à») → Je LUI réponds.\n/ COI – identificación:\nCOI = complemento con «À»:\nrépondre À mon chef → Je LUI réponds.\nCOD (sin «à»): Je vois mon chef → Je LE vois." },
+
+  { topic:"COI", q:"Complétez : « Il ne ___ répond pas. » (= à sa collègue)", tr:"Completa: «Él no ___ responde.» (= a su colega)",
+    opts:["le","la","lui","leur"], ans:2,
+    xp:"COI à la NÉGATIVE :\n• répondre à sa collègue (sing.) → LUI répond → ne LUI répond pas\nStructure négative : NE + pronom COI + verbe + PAS\n✓ Il ne LUI répond pas.\n✓ Elle ne LEUR téléphone pas.\nRègle : le pronom COI se place AVANT le verbe, même à la négative :\n• Il répond à sa collègue → Il LUI répond → Il ne LUI répond PAS.\n/ COI en NEGATIVO:\nNE + pronombre COI + verbo + PAS\nIl ne LUI répond pas. · Elle ne LEUR parle pas.\nEl pronombre COI va antes del verbo." },
+
+  // ── PASSÉ COMPOSÉ (8) ─────────────────────────────────────────
+  { topic:"Passé composé", q:"Choisissez le passé composé correct : « Il ___ le rapport. » (lire)", tr:"Elige el passé composé correcto: «Él ___ el informe.» (leer)",
+    opts:["il a lire","il a lu","il est lu","il a lis"], ans:1,
+    xp:"Passé composé – formation avec AVOIR :\nstructure : AVOIR au présent + PARTICIPE PASSÉ\nLIRE → participe passé = LU\n→ il A LU le rapport\nRègle : la majorité des verbes → AVOIR + PP\nQuelques PP irréguliers importants :\n• lire → LU · écrire → ÉCRIT · faire → FAIT\n• mettre → MIS · prendre → PRIS · voir → VU\n• avoir → EU · être → ÉTÉ\n/ Passé composé – formación con AVOIR:\nAVOIR présent + PARTICIPE PASSÉ\nlire → LU → il a LU\nPP irregulares: lire=LU · faire=FAIT · prendre=PRIS · voir=VU" },
+
+  { topic:"Passé composé", q:"Choisissez le passé composé correct : « Je ___ à Paris. » (aller)", tr:"Elige el passé composé correcto: «Yo ___ a París.» (ir)",
+    opts:["j'ai allé","je suis allé","j'ai allé à","j'ai été"], ans:1,
+    xp:"Passé composé – verbes avec ÊTRE :\nCertains verbes (mouvement / changement d'état) se conjuguent avec ÊTRE :\nAller · Venir · Partir · Arriver · Entrer · Sortir\nNaître · Mourir · Monter · Descendre · Rester · Tomber\n(mnémotechnique : «La Maison des Auxiliaires» ou «DR & MRS VANDERTRAMP»)\nÊTRE + PP → PP s'accorde avec le SUJET :\n• je suis allÉ (masc.) · je suis allÉE (fém.)\n→ ALLER → je SUIS ALLÉ\n/ Passé composé con ÊTRE:\naller · venir · partir · arriver · entrer · sortir...\nÊTRE + PP (PP concuerda con el sujeto):\nJe suis allé (masc.) · Je suis allée (fem.)" },
+
+  { topic:"Passé composé", q:"Complétez : « Elle ___ hier. » (partir)", tr:"Completa: «Ella ___ ayer.» (partir)",
+    opts:["est partie","a partie","est parti","a parti"], ans:0,
+    xp:"Passé composé avec ÊTRE – accord du PP :\nPARTIR → auxiliaire ÊTRE + participe passé PARTI\nAccord du PP avec le sujet :\n• il est parTI (masc. sing.)\n• elle est parTIE (fém. sing. → + e)\n• ils sont parTIS (masc. plur. → + s)\n• elles sont parTIES (fém. plur. → + es)\n→ sujet = elle (fém.) → elle est parTIE\n/ Passé composé con ÊTRE – acuerdo del PP:\nELLE est parTIE (fem. sing. → + e)\nIL est parti · ELLE est partIE · ILS sont partiS · ELLES sont partIES" },
+
+  { topic:"Passé composé", q:"Complétez : « Nous ___ ce matin. » (arriver)", tr:"Completa: «Nosotros ___ esta mañana.» (llegar)",
+    opts:["avons arrivé","sommes arrivés","avons arrivés","sommes arrivé"], ans:1,
+    xp:"Passé composé avec ÊTRE – accord du PP :\nARRIVER → auxiliaire ÊTRE + participe passé ARRIVÉ\nAccord du PP avec le sujet :\n• il est arrivÉ · elle est arrivÉE\n• nous (masc. ou mixte) sommes arrivÉS\n• nous (fém.) sommes arrivÉES\n→ sujet = nous (masc./mixte) → nous SOMMES arrivÉS\n/ Passé composé con ÊTRE:\nARRIVER → ÊTRE + arrivé\nnous SOMMES arrivÉS (masc./mixte)\nnous sommes arrivÉES (si todas son mujeres)" },
+
+  { topic:"Passé composé", q:"Choisissez le passé composé de « faire » pour «tu»", tr:"Elige el passé composé de «faire» para «tú»",
+    opts:["tu as fait","tu as fais","tu es fait","tu as faire"], ans:0,
+    xp:"Passé composé – verbes avec AVOIR (PP irréguliers) :\nFAIRE → PP = FAIT\n→ tu AS FAIT\nListe des PP irréguliers importants :\n• faire → FAIT · dire → DIT · écrire → ÉCRIT\n• lire → LU · voir → VU · boire → BU · avoir → EU\n• prendre → PRIS · mettre → MIS · vouloir → VOULU\n• pouvoir → PU · devoir → DÛ · savoir → SU\n/ Passé composé – PP irregulares:\nfaire→FAIT · dire→DIT · écrire→ÉCRIT\nlire→LU · voir→VU · prendre→PRIS\ntu AS FAIT (AVOIR + PP)" },
+
+  { topic:"Passé composé", q:"Quelle est la NÉGATION du passé composé : « Il a lu le rapport. »", tr:"¿Cuál es la NEGACIÓN del passé composé: «Il a lu le rapport.»?",
+    opts:["Il a lu ne pas le rapport.","Il ne a pas lu le rapport.","Il n'a pas lu le rapport.","Il a ne lu pas le rapport."], ans:2,
+    xp:"Passé composé à la NÉGATIVE :\nStructure : NE/N' + AUXILIAIRE + PAS + PP\n✓ Il N'A PAS lu le rapport.\nRègle : NE et PAS «encadrent» l'AUXILIAIRE (AVOIR ou ÊTRE) :\n• Il a lu → Il N'A PAS lu.\n• Elle est partie → Elle N'EST PAS partie.\n• Nous avons fini → Nous N'AVONS PAS fini.\n/ Passé composé en NEGATIVO:\nNE + AUXILIAIRE + PAS + PP\nIl N'A PAS lu. · Elle N'EST PAS partie.\nNE/PAS «rodean» el auxiliaire." },
+
+  { topic:"Passé composé", q:"Complétez : « Vous ___ votre présentations ? » (finir)", tr:"Completa: «¿Ustedes ___ su presentación?» (terminar)",
+    opts:["avez finit","avez fini","êtes fini","avez finis"], ans:1,
+    xp:"Passé composé – AVOIR + PP régulier en -IR :\nFINIR → PP = FINI (régulier : -ir → -i)\n→ vous AVEZ FINI\nRègle PP réguliers :\n• verbes en -ER → PP en -É : parler → parlÉ · arriver → arrivÉ\n• verbes en -IR → PP en -I : finir → finI · choisir → choisi\n• verbes en -RE → PP en -U : répondre → répondU · entendre → entendu\n/ Passé composé – formación de PP regulares:\n-ER → -É : parler→parlé · -IR → -I : finir→fini\n-RE → -U : répondre→répondu\nvous AVEZ FINI (AVOIR + PP)" },
+
+  { topic:"Passé composé", q:"Choisissez la phrase au passé composé correctement formée.", tr:"Elige la oración en passé composé correctamente formada.",
+    opts:["Elles sont allées à la réunion.","Elles ont allées à la réunion.","Elles sont allé à la réunion.","Elles est allées à la réunion."], ans:0,
+    xp:"Passé composé avec ÊTRE – accord du PP au FÉMININ PLURIEL :\nALLER → ÊTRE + allé\nAccord du PP selon le sujet :\n• il est allÉ · elle est allÉE\n• ils sont allÉS · elles sont allÉES\n→ «elles» (fém. plur.) → elles SONT allÉES\nRègle : avec ÊTRE, le PP s'accorde toujours avec le sujet (genre + nombre)\n/ Passé composé con ÊTRE – acuerdo:\nelles SONT allÉES (fem. plur. → + es)\nCon ÊTRE: PP concuerda en género y número con el sujeto." }
+
+];
+
+/* ================================================================
+   LOGIQUE
+================================================================ */
+let session = [], idx = 0, score = 0, answered = false;
+
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
+
+function startSession() {
+  session  = shuffle(BANK).slice(0, 10);
+  idx = 0; score = 0; answered = false;
+  document.getElementById('score-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display  = 'flex';
+  document.getElementById('quiz-screen').style.flexDirection = 'column';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = session[idx];
+  answered = false;
+  document.getElementById('prog-text').textContent = `Question ${idx + 1} / 10`;
+  document.getElementById('score-live').textContent = `Score : ${score}`;
+  document.getElementById('prog-fill').style.width  = `${(idx / 10) * 100}%`;
+  document.getElementById('topic-tag').textContent  = q.topic;
+  document.getElementById('q-text').textContent     = q.q;
+  document.getElementById('q-tr').textContent       = q.tr;
+
+  const opts = shuffle(q.opts.map((t, i) => ({ t, ok: i === q.ans })));
+  const cont = document.getElementById('options');
+  cont.innerHTML = '';
+  opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className       = 'opt-btn';
+    btn.dataset.correct = o.ok;
+    btn.innerHTML       = `<span class="key-hint">${i + 1}</span>${o.t}`;
+    btn.addEventListener('click', () => handleAnswer(btn, q));
+    cont.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'none'; fb.className = 'feedback';
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+function handleAnswer(sel, q) {
+  if (answered) return;
+  answered = true;
+  const ok = sel.dataset.correct === 'true';
+  if (ok) score++;
+  document.querySelectorAll('.opt-btn').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.correct === 'true') b.classList.add('correct');
+    else if (b === sel && !ok)        b.classList.add('wrong');
+  });
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'block';
+  fb.className = 'feedback ' + (ok ? 'correct' : 'wrong');
+  document.getElementById('fb-head').textContent = ok
+    ? '✓ Correct !'
+    : `✗ Incorrect — La bonne réponse est : ${q.opts[q.ans]}`;
+  document.getElementById('fb-body').textContent = q.xp;
+  document.getElementById('score-live').textContent = `Score : ${score}`;
+  const nb = document.getElementById('btn-next');
+  nb.style.display = 'block';
+  nb.textContent   = idx < 9 ? 'Question suivante →' : 'Voir le résultat →';
+}
+
+function nextQuestion() {
+  idx++;
+  if (idx < 10) showQuestion();
+  else showScore();
+}
+
+function showScore() {
+  document.getElementById('quiz-screen').style.display  = 'none';
+  document.getElementById('score-screen').style.display = 'flex';
+  document.getElementById('sc-num').textContent = score;
+  document.getElementById('sc-pct').textContent = `${score * 10} %`;
+  const msgs = [
+    [10, '🏆 Parfait ! Félicitations !'],
+    [8,  '⭐ Excellent ! Bravo !'],
+    [6,  '👍 Bien ! Continuez à réviser.'],
+    [4,  '📚 Pas mal. Révisez les points difficiles.'],
+    [0,  '💪 Continuez ! La pratique paie toujours.']
+  ];
+  document.getElementById('sc-msg').textContent =
+    (msgs.find(([min]) => score >= min) || msgs[msgs.length - 1])[1];
+}
+
+function goToCover() {
+  document.getElementById('cover').classList.remove('hidden');
+}
+
+function restart() { switchTab('quiz'); startSession(); }
+
+function switchTab(tab) {
+  ['quiz','grammar'].forEach(t => {
+    document.getElementById('pane-' + t).classList.toggle('active', t === tab);
+    document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
+  });
+}
+
+function commencer() {
+  document.getElementById('cover').classList.add('hidden');
+  startSession();
+}
+
+// ── Raccourcis clavier ──────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  const key = e.key;
+  if (['1','2','3','4'].includes(key)) {
+    if (answered) return;
+    const btns = document.querySelectorAll('.opt-btn:not(:disabled)');
+    const i = parseInt(key) - 1;
+    if (btns[i]) btns[i].click();
+  }
+  if ((key === 'Enter' || key === ' ') && answered) {
+    e.preventDefault();
+    const nb = document.getElementById('btn-next');
+    if (nb.style.display !== 'none') nb.click();
+  }
+});
+</script>
+</body>
+</html>
